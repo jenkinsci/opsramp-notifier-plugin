@@ -4,21 +4,21 @@
           field="vistaraClientId"
           name="vistaraClientId"
           value="${descriptor.getVistaraClientId()}"
-          help="${rootUrl}/plugin/vistara/help-vistara-clientid.html">
+          help="${rootUrl}/plugin/vistara-notifier/help-vistara-clientid.html">
           <f:textbox />
         </f:entry>
     <f:entry title="API Key"
       name="vistaraApiKey"
       field="vistaraApiKey"
       value="${descriptor.getVistaraApiKey()}"
-      help="${rootUrl}/plugin/vistara/help-vistara-api-key.html">
+      help="${rootUrl}/plugin/vistara-notifier/help-vistara-api-key.html">
       <f:textbox />
     </f:entry>
     <f:entry title="API Secret"
       name="vistaraApiSecret"
       field="vistaraApiSecret"
       value="${descriptor.getVistaraApiSecret()}"
-      help="${rootUrl}/plugin/vistara/help-vistara-api-secret.html">
+      help="${rootUrl}/plugin/vistara-notifier/help-vistara-api-secret.html">
       <f:password />
     </f:entry>
     <f:advanced>    	
@@ -26,7 +26,7 @@
           field="vistaraBaseURI"
           name="vistaraBaseURI"
           value="${descriptor.getvistaraBaseURI()}"
-          help="${rootUrl}/plugin/vistara/help-vistara-url.html">
+          help="${rootUrl}/plugin/vistara-notifier/help-vistara-url.html">
           <f:textbox
               default="${descriptor.getVistaraDefaultBaseURI()}"
           />
