@@ -31,12 +31,12 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
 	public static Alert prepareVistaraAlert(final AbstractBuild<?, ?> build, final String state) {
     	Alert vistaraAlert = new Alert();
     	
-    	vistaraAlert.setSubject(VistaraNotifierUtils.prepareAlertSubject(build, state));
-    	vistaraAlert.setDescription(VistaraNotifierUtils.prepareAlertDescription(build, vistaraAlert.getSubject()));
-    	vistaraAlert.setDevice(VistaraNotifierUtils.prepareHost(build));
+    	vistaraAlert.setSubject(prepareAlertSubject(build, state));
+    	vistaraAlert.setDescription(prepareAlertDescription(build, vistaraAlert.getSubject()));
+    	vistaraAlert.setDevice(prepareHost(build));
     	vistaraAlert.setAlertTime(TimeUtils.getDateTime(TimeUtils.DB_DATE_FORMAT, new Date()));
     	vistaraAlert.setServiceName(DEFAULT_METRIC);
-    	vistaraAlert.setCurrentState(VistaraNotifierUtils.prepareAlertState(state));
+    	vistaraAlert.setCurrentState(prepareAlertState(state));
     	vistaraAlert.setApp(JENKINS);
     	vistaraAlert.setExtAlertId(String.valueOf(build.getNumber()));
     	
