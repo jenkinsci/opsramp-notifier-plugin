@@ -39,6 +39,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
     	vistaraAlert.setCurrentState(prepareAlertState(state));
     	vistaraAlert.setApp(JENKINS);
     	vistaraAlert.setExtAlertId(String.valueOf(build.getNumber()));
+    	vistaraAlert.setUniqueId(String.valueOf(build.getNumber()));
     	
     	return vistaraAlert;
     }
