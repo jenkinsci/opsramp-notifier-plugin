@@ -106,7 +106,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
          
         description.append(DESC_BUILD_USER + COLON + SPACE + buildUser + NEW_lINE)
         .append(DESC_CHANGE_LOG + COLON + SPACE + changeLog.toString() + NEW_lINE)
-        .append(BUILD_NAME + COLON + SPACE + build.getFullDisplayName() + " - " + build.getDisplayName() + NEW_lINE)
+        .append(BUILD_NAME + COLON + SPACE + build.getProject().getName() + NEW_lINE)
         .append(BUILD_NUMBER + COLON + SPACE + build.getNumber() + NEW_lINE)
         .append(BUILD_URL + COLON + SPACE + build.getUrl() + NEW_lINE)
         .append(BUILD_FULL_URL + COLON + SPACE + Jenkins.getInstance().getRootUrl() + build.getUrl() + NEW_lINE);

@@ -16,10 +16,10 @@ public interface VistaraNotifierConstants {
 	public final static String VISTARA_DISPLAY_NAME 	= "Vistara notification";
 	
 	//Tags
-	public final static String BUILD_NAME 				= "name";
-	public final static String BUILD_NUMBER 			= "buildNumber";
-	public final static String BUILD_URL 				= "url";
-	public final static String BUILD_FULL_URL 			= "fullUrl";
+	public final static String BUILD_NAME 				= "Name";
+	public final static String BUILD_NUMBER 			= "Build number";
+	public final static String BUILD_URL 				= "URL";
+	public final static String BUILD_FULL_URL 			= "Full URL";
 	public final static String BUILD_STATE 				= "state";
 	public final static String BUILD_SERVICE_NAME 		= "serviceName";
 	public final static String BUILD_USER 				= "state";
