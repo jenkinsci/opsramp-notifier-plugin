@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="var" path="M2_REPO/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/net/sf/json-lib/json-lib/2.4/json-lib-2.4-jdk15.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/jenkins-ci/main/jenkins-core/1.605/jenkins-core-1.605.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/kohsuke/stapler/stapler/1.236/stapler-1.236.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/vistara/integrations/vistara-api-sdk/4.0-SNAPSHOT/vistara-api-sdk-4.0-SNAPSHOT.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
