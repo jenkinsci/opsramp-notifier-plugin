@@ -49,7 +49,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
 	 * @return
 	 */
 	public static String prepareAlertSubject(final AbstractBuild<?, ?> build, final String state) {
-    	String subject = build.getProject().getName() + SPACE;
+    	String subject = build.getProject().getName() + SPACE + BUILD_STR + build.getNumber() + SPACE;
         if(state.equalsIgnoreCase(FAILED)) {
         	subject += build.getResult();
         } else {

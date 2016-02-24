@@ -28,6 +28,7 @@ public interface VistaraNotifierConstants {
 	public final static String SUBJECT 					= "subject";
 	public final static String DESCRIPTION 				= "description";
 	public final static String HOSTS 					= "hosts";
+	public final static String BUILD_STR				= "build";
 	
 	public final static String EMPTY_STR				= "";
 	public final static String COMMA					= ",";
