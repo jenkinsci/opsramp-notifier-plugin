@@ -1,0 +1,36 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:section title="Vistara Notifier">
+    <f:entry title="Client ID"
+          field="vistaraClientId"
+          name="vistaraClientId"
+          value="${descriptor.getVistaraClientId()}"
+          help="${rootUrl}/plugin/vistara/help-vistara-clientid.html">
+          <f:textbox />
+        </f:entry>
+    <f:entry title="API Key"
+      name="vistaraApiKey"
+      field="vistaraApiKey"
+      value="${descriptor.getVistaraApiKey()}"
+      help="${rootUrl}/plugin/vistara/help-vistara-api-key.html">
+      <f:textbox />
+    </f:entry>
+    <f:entry title="API Secret"
+      name="vistaraApiSecret"
+      field="vistaraApiSecret"
+      value="${descriptor.getVistaraApiSecret()}"
+      help="${rootUrl}/plugin/vistara/help-vistara-api-secret.html">
+      <f:password />
+    </f:entry>
+    <f:advanced>    	
+        <f:entry title="Base URI"
+          field="vistaraBaseURI"
+          name="vistaraBaseURI"
+          value="${descriptor.getvistaraBaseURI()}"
+          help="${rootUrl}/plugin/vistara/help-vistara-url.html">
+          <f:textbox
+              default="${descriptor.getVistaraDefaultBaseURI()}"
+          />
+        </f:entry>
+    </f:advanced>
+  </f:section>
+</j:jelly>
