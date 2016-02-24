@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.vistaranotifier;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.Cause;
 import hudson.model.Cause.UserIdCause;
 import hudson.scm.ChangeLogSet;
+import hudson.scm.ChangeLogSet.AffectedFile;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -68,7 +70,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
 	public static String prepareAlertDescription(final AbstractBuild<?, ?> build, final String subject) {
     	final AbstractBuild<?, ?> rootBuild = build.getRootBuild();
     	
-    	StringBuffer description = new StringBuffer(subject + NEW_lINE);
+    	StringBuffer description = new StringBuffer(subject + NEW_LINE);
     	 
     	//Build triggered by
         List<Cause> causes = build.getCauses();
@@ -87,7 +89,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
         	ChangeLogSet.Entry entry = (ChangeLogSet.Entry) o;
             entries.add(entry);
         }
-         
+        
         if(entries.isEmpty()) {
             if(build.getDescription() != null && !build.getDescription().equals(EMPTY_STR)) {
             	changeLog.append(build.getDescription());
@@ -95,22 +97,29 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
              	changeLog.append(causes.get(0).getShortDescription());
             }
         } else {
-        	String authors = EMPTY_STR;
-            String commitAndMessages = EMPTY_STR;
             for(ChangeLogSet.Entry entry : entries) {
-            	authors += entry.getAuthor().getDisplayName() + COMMA;
-                commitAndMessages += entry.getCommitId() + COLON + entry.getMsg() + COMMA;
+            	changeLog.append(entry.getCommitId() + COLON + entry.getMsg() + NEW_LINE);
+                changeLog.append(REV_STR).append(SPACE).append(BY_STR).append(SPACE)
+                .append(entry.getAuthor().getDisplayName()).append(COLON + NEW_LINE)
+                .append(entry.getCommitId()).append(COLON).append(entry.getMsg()).append(NEW_LINE);
+                
+                if(entry.getAffectedFiles() != null && entry.getAffectedFiles().size() > 0) {
+	                Iterator<?extends AffectedFile> files = entry.getAffectedFiles().iterator();
+	                while(files.hasNext()) {
+	                	AffectedFile file = files.next();
+	                	changeLog.append(FILE_PATH).append(COLON).append(SPACE).append(file.getPath());
+	                }
+                }
+                changeLog.append(NEW_LINE);
             }
-            changeLog.append(BUILD_AUTHORS + COLON + SPACE + authors);
-            changeLog.append(BUILD_COMMIT_DETAILS + COLON + SPACE + commitAndMessages);
         }
          
-        description.append(DESC_BUILD_USER + COLON + SPACE + buildUser + NEW_lINE)
-        .append(DESC_CHANGE_LOG + COLON + SPACE + changeLog.toString() + NEW_lINE)
-        .append(BUILD_NAME + COLON + SPACE + build.getProject().getName() + NEW_lINE)
-        .append(BUILD_NUMBER + COLON + SPACE + build.getNumber() + NEW_lINE)
-        .append(BUILD_URL + COLON + SPACE + build.getUrl() + NEW_lINE)
-        .append(BUILD_FULL_URL + COLON + SPACE + Jenkins.getInstance().getRootUrl() + build.getUrl() + NEW_lINE);
+        description.append(DESC_BUILD_USER + COLON + SPACE + buildUser + NEW_LINE)
+        .append(DESC_CHANGE_LOG + COLON + SPACE + changeLog.toString() + NEW_LINE)
+        .append(BUILD_NAME + COLON + SPACE + build.getProject().getName() + NEW_LINE)
+        .append(BUILD_NUMBER + COLON + SPACE + build.getNumber() + NEW_LINE)
+        .append(BUILD_URL + COLON + SPACE + build.getUrl() + NEW_LINE)
+        .append(BUILD_FULL_URL + COLON + SPACE + Jenkins.getInstance().getRootUrl() + build.getUrl() + NEW_LINE);
          
         return description.toString();
     }
@@ -215,14 +224,14 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
         json.put(SUBJECT, subject);
         
         //Description
-        StringBuffer description = new StringBuffer(subject + NEW_lINE);
-        description.append("Build triggered by: " + json.get("triggeredBy") + NEW_lINE);
-        description.append("Change log: " + changeLog.toString() + NEW_lINE);
-        description.append("Build project name: " + build.getProject().getName() + NEW_lINE);
-        description.append("Root build project name: " + rootBuild.getProject().getName() + NEW_lINE);
-        description.append("Build project full display name: " + build.getProject().getFullDisplayName() + NEW_lINE);
-        description.append("Build project full name: " + build.getProject().getFullName() + NEW_lINE);
-        description.append("Build project URL: " + build.getProject().getUrl() + NEW_lINE);
+        StringBuffer description = new StringBuffer(subject + NEW_LINE);
+        description.append("Build triggered by: " + json.get("triggeredBy") + NEW_LINE);
+        description.append("Change log: " + changeLog.toString() + NEW_LINE);
+        description.append("Build project name: " + build.getProject().getName() + NEW_LINE);
+        description.append("Root build project name: " + rootBuild.getProject().getName() + NEW_LINE);
+        description.append("Build project full display name: " + build.getProject().getFullDisplayName() + NEW_LINE);
+        description.append("Build project full name: " + build.getProject().getFullName() + NEW_LINE);
+        description.append("Build project URL: " + build.getProject().getUrl() + NEW_LINE);
         json.put(DESCRIPTION, description.toString());
         
         //devices

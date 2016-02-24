@@ -28,13 +28,12 @@ public interface VistaraNotifierConstants {
 	public final static String SUBJECT 					= "subject";
 	public final static String DESCRIPTION 				= "description";
 	public final static String HOSTS 					= "hosts";
-	public final static String BUILD_STR				= "build";
 	
 	public final static String EMPTY_STR				= "";
 	public final static String COMMA					= ",";
 	public final static String COLON					= ":";
 	public final static String SPACE					= " ";
-	public final static String NEW_lINE					= "\n";
+	public final static String NEW_LINE					= "\n";
 	
 	//Parameters
 	public final static String CLIENT_ID_PARAM			= "vistaraClientId";
@@ -52,4 +51,7 @@ public interface VistaraNotifierConstants {
 	public final static String DESC_BUILD_USER			= "Build triggered by";
 	public final static String DESC_CHANGE_LOG			= "Change log";
 	public final static String DEFAULT_METRIC			= "Build progress";
+	public final static String FILE_PATH				= "Modified file path";
+	public final static String REV_STR					= "Revision";
+	public final static String BY_STR					= "by";
 }
