@@ -23,7 +23,7 @@ public interface VistaraNotifierConstants {
 	public final static String BUILD_STATE 				= "state";
 	public final static String BUILD_SERVICE_NAME 		= "serviceName";
 	public final static String BUILD_USER 				= "state";
-	public final static String BUILD_AUTHORS 			= "AuthorS";
+	public final static String BUILD_AUTHORS 			= "Authors";
 	public final static String BUILD_COMMIT_DETAILS		= "Commit Details";
 	public final static String SUBJECT 					= "subject";
 	public final static String DESCRIPTION 				= "description";
