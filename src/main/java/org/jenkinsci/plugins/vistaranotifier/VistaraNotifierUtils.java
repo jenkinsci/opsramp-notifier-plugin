@@ -82,7 +82,8 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
         }
          
         //Change log details
-        StringBuffer changeLog = new StringBuffer(EMPTY_STR);
+        StringBuffer changeLog = new StringBuffer(EMPTY_STR).append(NEW_LINE);
+        StringBuffer summary = new StringBuffer(EMPTY_STR);
         ChangeLogSet<? extends ChangeLogSet.Entry> changeSet = rootBuild.getChangeSet();
         List<ChangeLogSet.Entry> entries = new LinkedList<ChangeLogSet.Entry>();
         for(Object o : changeSet.getItems()) {
@@ -98,28 +99,32 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
             }
         } else {
             for(ChangeLogSet.Entry entry : entries) {
-            	changeLog.append(entry.getCommitId() + COLON + entry.getMsg() + NEW_LINE);
+            	summary.append(entry.getCommitId() + COLON + entry.getMsg() + NEW_LINE);
                 changeLog.append(REV_STR).append(SPACE).append(BY_STR).append(SPACE)
                 .append(entry.getAuthor().getDisplayName()).append(COLON + NEW_LINE)
                 .append(entry.getCommitId()).append(COLON).append(entry.getMsg()).append(NEW_LINE);
                 
                 if(entry.getAffectedFiles() != null && entry.getAffectedFiles().size() > 0) {
 	                Iterator<?extends AffectedFile> files = entry.getAffectedFiles().iterator();
+	                changeLog.append(FILE_PATH).append(COLON).append(SPACE);
 	                while(files.hasNext()) {
 	                	AffectedFile file = files.next();
-	                	changeLog.append(FILE_PATH).append(COLON).append(SPACE).append(file.getPath());
+	                	changeLog.append(file.getPath());
 	                }
                 }
                 changeLog.append(NEW_LINE);
             }
         }
          
-        description.append(DESC_BUILD_USER + COLON + SPACE + buildUser + NEW_LINE)
-        .append(DESC_CHANGE_LOG + COLON + SPACE + changeLog.toString() + NEW_LINE)
-        .append(BUILD_NAME + COLON + SPACE + build.getProject().getName() + NEW_LINE)
-        .append(BUILD_NUMBER + COLON + SPACE + build.getNumber() + NEW_LINE)
-        .append(BUILD_URL + COLON + SPACE + build.getUrl() + NEW_LINE)
-        .append(BUILD_FULL_URL + COLON + SPACE + Jenkins.getInstance().getRootUrl() + build.getUrl() + NEW_LINE);
+        description.append(DESC_BUILD_USER + COLON + SPACE + buildUser + NEW_LINE);
+        if(!summary.toString().equals(EMPTY_STR)) {
+        	description.append(DESC_SUMMARY).append(COLON).append(SPACE).append(summary.toString()).append(NEW_LINE);
+        }
+        description.append(DESC_CHANGE_LOG).append(COLON).append(SPACE).append(changeLog.toString()).append(NEW_LINE)
+        .append(BUILD_NAME).append(COLON).append(SPACE).append(build.getProject().getName()).append(NEW_LINE)
+        .append(BUILD_NUMBER).append(COLON).append(SPACE + build.getNumber()).append(NEW_LINE)
+        .append(BUILD_URL).append(COLON).append(SPACE).append(build.getUrl()).append(NEW_LINE)
+        .append(BUILD_FULL_URL).append(COLON).append(SPACE).append(Jenkins.getInstance().getRootUrl()).append(build.getUrl()).append(NEW_LINE);
          
         return description.toString();
     }

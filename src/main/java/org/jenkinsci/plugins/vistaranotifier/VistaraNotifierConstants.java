@@ -50,6 +50,7 @@ public interface VistaraNotifierConstants {
 	
 	public final static String DESC_BUILD_USER			= "Build triggered by";
 	public final static String DESC_CHANGE_LOG			= "Change log";
+	public final static String DESC_SUMMARY				= "Summary";
 	public final static String DEFAULT_METRIC			= "Build progress";
 	public final static String FILE_PATH				= "Modified file path";
 	public final static String REV_STR					= "Revision";
