@@ -35,7 +35,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
     	
     	vistaraAlert.setSubject(prepareAlertSubject(build, state));
     	vistaraAlert.setCurrentState(prepareAlertState(state));
-    	vistaraAlert.setDescription(prepareAlertDescription(build, state));
+    	vistaraAlert.setDescription(prepareAlertDescription(build, state, vistaraAlert.getSubject()));
     	vistaraAlert.setDevice(prepareHost(build));
     	vistaraAlert.setAlertTime(TimeUtils.getDateTime(TimeUtils.DB_DATE_FORMAT, new Date()));
     	vistaraAlert.setServiceName(DEFAULT_METRIC);
@@ -72,11 +72,13 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
 	 * @param subject
 	 * @return
 	 */
-	public static String prepareAlertDescription(AbstractBuild<?, ?> build, String state) {
+	public static String prepareAlertDescription(AbstractBuild<?, ?> build, String state, String subject) {
     	final AbstractBuild<?, ?> rootBuild = build.getRootBuild();
     	
-    	StringBuffer description = new StringBuffer(build.getBuildStatusSummary().message + NEW_LINE);
+    	StringBuffer description = new StringBuffer(EMPTY_STR);
     	if(state.equals(STARTED)) {
+    		description.append(subject).append(NEW_LINE);
+    		
 	    	//Build triggered by
 	        List<Cause> causes = build.getCauses();
 	        String buildUser = null;
@@ -120,18 +122,19 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
 	                changeLog.append(NEW_LINE).append(NEW_LINE);
 	            }
 	        }
-	         
-	        description.append(DESC_BUILD_USER + COLON + SPACE + buildUser + NEW_LINE);
+	        
+	        description.append(BUILD_NAME).append(COLON).append(SPACE).append(build.getProject().getName()).append(NEW_LINE)
+	        .append(BUILD_NUMBER).append(COLON).append(SPACE + build.getNumber()).append(NEW_LINE)
+	        .append(BUILD_URL).append(COLON).append(SPACE).append(build.getUrl()).append(NEW_LINE)
+	        .append(BUILD_FULL_URL).append(COLON).append(SPACE).append(Jenkins.getInstance().getRootUrl()).append(build.getUrl()).append(NEW_LINE)
+	        .append(DESC_BUILD_USER + COLON + SPACE + buildUser + NEW_LINE);
 	        if(!summary.toString().equals(EMPTY_STR)) {
 	        	description.append(DESC_SUMMARY).append(COLON).append(NEW_LINE).append(summary.toString()).append(NEW_LINE);
 	        }
 	        
-	        description.append(DESC_CHANGE_LOG).append(COLON).append(NEW_LINE).append(changeLog.toString())
-	        .append(BUILD_NAME).append(COLON).append(SPACE).append(build.getProject().getName()).append(NEW_LINE)
-	        .append(BUILD_NUMBER).append(COLON).append(SPACE + build.getNumber()).append(NEW_LINE)
-	        .append(BUILD_URL).append(COLON).append(SPACE).append(build.getUrl()).append(NEW_LINE)
-	        .append(BUILD_FULL_URL).append(COLON).append(SPACE).append(Jenkins.getInstance().getRootUrl()).append(build.getUrl()).append(NEW_LINE);
+	        description.append(DESC_CHANGE_LOG).append(COLON).append(NEW_LINE).append(changeLog.toString());
     	} else if(state.equals(FAILED)) {
+    		description.append(build.getBuildStatusSummary().message).append(NEW_LINE);
     		try {
 	    		List<String> logLines = build.getLog(MAX_LINES);
 	    		if(logLines != null && !logLines.isEmpty()) {
@@ -144,6 +147,8 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
     		} catch(Exception e) {
     			//Ignore
     		}
+	    } else {
+	    	description.append(build.getBuildStatusSummary().message).append(NEW_LINE);
 	    }
     	
         return description.toString();
