@@ -118,9 +118,9 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
          
         description.append(DESC_BUILD_USER + COLON + SPACE + buildUser + NEW_LINE);
         if(!summary.toString().equals(EMPTY_STR)) {
-        	description.append(DESC_SUMMARY).append(COLON).append(SPACE).append(summary.toString()).append(NEW_LINE);
+        	description.append(DESC_SUMMARY).append(COLON).append(NEW_LINE).append(summary.toString()).append(NEW_LINE);
         }
-        description.append(DESC_CHANGE_LOG).append(COLON).append(SPACE).append(changeLog.toString()).append(NEW_LINE)
+        description.append(DESC_CHANGE_LOG).append(COLON).append(NEW_LINE).append(changeLog.toString()).append(NEW_LINE)
         .append(BUILD_NAME).append(COLON).append(SPACE).append(build.getProject().getName()).append(NEW_LINE)
         .append(BUILD_NUMBER).append(COLON).append(SPACE + build.getNumber()).append(NEW_LINE)
         .append(BUILD_URL).append(COLON).append(SPACE).append(build.getUrl()).append(NEW_LINE)
