@@ -55,4 +55,7 @@ public interface VistaraNotifierConstants {
 	public final static String FILE_PATH				= "Modified file path";
 	public final static String REV_STR					= "Revision";
 	public final static String BY_STR					= "by";
+	public final static String CONSOLE_LOG_MSG1			= "Last";
+	public final static String CONSOLE_LOG_MSG2			= "lines of console output";
+	public final static int MAX_LINES					= 200;
 }

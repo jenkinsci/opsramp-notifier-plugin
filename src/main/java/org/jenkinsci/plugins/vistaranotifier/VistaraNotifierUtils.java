@@ -34,11 +34,11 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
     	Alert vistaraAlert = new Alert();
     	
     	vistaraAlert.setSubject(prepareAlertSubject(build, state));
-    	vistaraAlert.setDescription(prepareAlertDescription(build, vistaraAlert.getSubject()));
+    	vistaraAlert.setCurrentState(prepareAlertState(state));
+    	vistaraAlert.setDescription(prepareAlertDescription(build, state));
     	vistaraAlert.setDevice(prepareHost(build));
     	vistaraAlert.setAlertTime(TimeUtils.getDateTime(TimeUtils.DB_DATE_FORMAT, new Date()));
     	vistaraAlert.setServiceName(DEFAULT_METRIC);
-    	vistaraAlert.setCurrentState(prepareAlertState(state));
     	vistaraAlert.setApp(JENKINS);
     	vistaraAlert.setExtAlertId(String.valueOf(build.getNumber()));
     	vistaraAlert.setUniqueId(String.valueOf(build.getNumber()));
@@ -63,69 +63,92 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
     }
 	
 	/** Prepare Vistara alert description
+	 * 
+	 * STARTED - send all change log, name, number, URL details as alert description along with build summary
+	 * FAILED  - send last 200 lines console output as description along with build summary
+	 * SUCCESS - send build summary as description
+	 * 
 	 * @param build
 	 * @param subject
 	 * @return
 	 */
-	public static String prepareAlertDescription(final AbstractBuild<?, ?> build, final String subject) {
+	public static String prepareAlertDescription(final AbstractBuild<?, ?> build, final String state) {
     	final AbstractBuild<?, ?> rootBuild = build.getRootBuild();
     	
-    	StringBuffer description = new StringBuffer(subject + NEW_LINE);
-    	 
-    	//Build triggered by
-        List<Cause> causes = build.getCauses();
-        String buildUser = null;
-        if (causes.size() > 0 && (causes.get(0) instanceof Cause.UserIdCause)){
-        	buildUser =  ((UserIdCause)causes.get(0)).getUserName();
-        } else {
-        	buildUser = ANONYMOUS_USER;
-        }
-         
-        //Change log details
-        StringBuffer changeLog = new StringBuffer(EMPTY_STR).append(NEW_LINE);
-        StringBuffer summary = new StringBuffer(EMPTY_STR);
-        ChangeLogSet<? extends ChangeLogSet.Entry> changeSet = rootBuild.getChangeSet();
-        List<ChangeLogSet.Entry> entries = new LinkedList<ChangeLogSet.Entry>();
-        for(Object o : changeSet.getItems()) {
-        	ChangeLogSet.Entry entry = (ChangeLogSet.Entry) o;
-            entries.add(entry);
-        }
-        
-        if(entries.isEmpty()) {
-            if(build.getDescription() != null && !build.getDescription().equals(EMPTY_STR)) {
-            	changeLog.append(build.getDescription());
-            } else { 
-             	changeLog.append(causes.get(0).getShortDescription());
-            }
-        } else {
-            for(ChangeLogSet.Entry entry : entries) {
-            	summary.append(entry.getCommitId() + COLON + entry.getMsg() + NEW_LINE);
-                changeLog.append(REV_STR).append(SPACE).append(BY_STR).append(SPACE)
-                .append(entry.getAuthor().getDisplayName()).append(COLON + NEW_LINE)
-                .append(entry.getCommitId()).append(COLON).append(entry.getMsg()).append(NEW_LINE);
-                
-                if(entry.getAffectedFiles() != null && entry.getAffectedFiles().size() > 0) {
-	                Iterator<?extends AffectedFile> files = entry.getAffectedFiles().iterator();
-	                changeLog.append(FILE_PATH).append(COLON).append(SPACE);
-	                while(files.hasNext()) {
-	                	AffectedFile file = files.next();
-	                	changeLog.append(file.getPath());
-	                }
-                }
-                changeLog.append(NEW_LINE);
-            }
-        }
-         
-        description.append(DESC_BUILD_USER + COLON + SPACE + buildUser + NEW_LINE);
-        if(!summary.toString().equals(EMPTY_STR)) {
-        	description.append(DESC_SUMMARY).append(COLON).append(NEW_LINE).append(summary.toString()).append(NEW_LINE);
-        }
-        description.append(DESC_CHANGE_LOG).append(COLON).append(NEW_LINE).append(changeLog.toString()).append(NEW_LINE)
-        .append(BUILD_NAME).append(COLON).append(SPACE).append(build.getProject().getName()).append(NEW_LINE)
-        .append(BUILD_NUMBER).append(COLON).append(SPACE + build.getNumber()).append(NEW_LINE)
-        .append(BUILD_URL).append(COLON).append(SPACE).append(build.getUrl()).append(NEW_LINE)
-        .append(BUILD_FULL_URL).append(COLON).append(SPACE).append(Jenkins.getInstance().getRootUrl()).append(build.getUrl()).append(NEW_LINE);
-         
+    	StringBuffer description = new StringBuffer(build.getBuildStatusSummary().message + NEW_LINE);
+    	switch(state) {
+	    	case STARTED:
+		    	//Build triggered by
+		        List<Cause> causes = build.getCauses();
+		        String buildUser = null;
+		        if (causes.size() > 0 && (causes.get(0) instanceof Cause.UserIdCause)){
+		        	buildUser =  ((UserIdCause)causes.get(0)).getUserName();
+		        } else {
+		        	buildUser = ANONYMOUS_USER;
+		        }
+		        
+		        //Change log details
+		        StringBuffer changeLog = new StringBuffer(EMPTY_STR);
+		        StringBuffer summary = new StringBuffer(EMPTY_STR);
+		        ChangeLogSet<? extends ChangeLogSet.Entry> changeSet = rootBuild.getChangeSet();
+		        List<ChangeLogSet.Entry> entries = new LinkedList<ChangeLogSet.Entry>();
+		        for(Object o : changeSet.getItems()) {
+		        	ChangeLogSet.Entry entry = (ChangeLogSet.Entry) o;
+		            entries.add(entry);
+		        }
+		        
+		        if(entries.isEmpty()) {
+		            if(build.getDescription() != null && !build.getDescription().equals(EMPTY_STR)) {
+		            	changeLog.append(build.getDescription());
+		            } else { 
+		             	changeLog.append(causes.get(0).getShortDescription());
+		            }
+		        } else {
+		            for(ChangeLogSet.Entry entry : entries) {
+		            	summary.append(entry.getCommitId() + COLON + entry.getMsg() + NEW_LINE);
+		                changeLog.append(REV_STR).append(SPACE).append(BY_STR).append(SPACE)
+		                .append(entry.getAuthor().getDisplayName()).append(COLON).append(NEW_LINE)
+		                .append(entry.getCommitId()).append(COLON).append(entry.getMsg()).append(NEW_LINE);
+		                
+		                if(entry.getAffectedFiles() != null && entry.getAffectedFiles().size() > 0) {
+			                Iterator<?extends AffectedFile> files = entry.getAffectedFiles().iterator();
+			                changeLog.append(FILE_PATH).append(COLON).append(SPACE);
+			                while(files.hasNext()) {
+			                	AffectedFile file = files.next();
+			                	changeLog.append(file.getPath());
+			                }
+		                }
+		                changeLog.append(NEW_LINE).append(NEW_LINE);
+		            }
+		        }
+		         
+		        description.append(DESC_BUILD_USER + COLON + SPACE + buildUser + NEW_LINE);
+		        if(!summary.toString().equals(EMPTY_STR)) {
+		        	description.append(DESC_SUMMARY).append(COLON).append(NEW_LINE).append(summary.toString()).append(NEW_LINE);
+		        }
+		        description.append(DESC_CHANGE_LOG).append(COLON).append(NEW_LINE).append(changeLog.toString())
+		        .append(BUILD_NAME).append(COLON).append(SPACE).append(build.getProject().getName()).append(NEW_LINE)
+		        .append(BUILD_NUMBER).append(COLON).append(SPACE + build.getNumber()).append(NEW_LINE)
+		        .append(BUILD_URL).append(COLON).append(SPACE).append(build.getUrl()).append(NEW_LINE)
+		        .append(BUILD_FULL_URL).append(COLON).append(SPACE).append(Jenkins.getInstance().getRootUrl()).append(build.getUrl()).append(NEW_LINE);
+		        
+		        break;
+	    	case FAILED:// Send console output in case of build failure
+	    		try {
+		    		List<String> logLines = build.getLog(MAX_LINES);
+		    		if(logLines != null && !logLines.isEmpty()) {
+		    			description.append(CONSOLE_LOG_MSG1).append(SPACE).append(MAX_LINES).append(SPACE)
+		    			.append(CONSOLE_LOG_MSG2).append(COLON).append(NEW_LINE);
+		    			for(String log : logLines) {
+		    				description.append(log).append(NEW_LINE);
+		    			}
+		    		}
+	    		} catch(Exception e) {
+	    			//Ignore
+	    		}
+	    		break;
+	    	}
+    	
         return description.toString();
     }
 	
