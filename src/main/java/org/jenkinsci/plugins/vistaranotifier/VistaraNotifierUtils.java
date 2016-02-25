@@ -12,6 +12,7 @@ import com.vistara.sdk.utils.TimeUtils;
 
 import hudson.model.AbstractBuild;
 import hudson.model.Cause;
+import hudson.model.Result;
 import hudson.model.Cause.UserIdCause;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.ChangeLogSet.AffectedFile;
@@ -75,10 +76,8 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
 	public static String prepareAlertDescription(AbstractBuild<?, ?> build, String state, String subject) {
     	final AbstractBuild<?, ?> rootBuild = build.getRootBuild();
     	
-    	StringBuffer description = new StringBuffer(EMPTY_STR);
+    	StringBuffer description = new StringBuffer(subject).append(NEW_LINE);
     	if(state.equals(STARTED)) {
-    		description.append(subject).append(NEW_LINE);
-    		
 	    	//Build triggered by
 	        List<Cause> causes = build.getCauses();
 	        String buildUser = null;
@@ -134,11 +133,14 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
 	        
 	        description.append(DESC_CHANGE_LOG).append(COLON).append(NEW_LINE).append(changeLog.toString());
     	} else if(state.equals(FAILED)) {
-    		description.append(build.getBuildStatusSummary().message).append(NEW_LINE);
     		try {
+    			int maxLogLines = MAX_LINES;
+    			if(build.getResult() != Result.FAILURE) { //Don't get max lines if it is other than failure
+    				maxLogLines = MIN_LINES;
+    			}
 	    		List<String> logLines = build.getLog(MAX_LINES);
 	    		if(logLines != null && !logLines.isEmpty()) {
-	    			description.append(CONSOLE_LOG_MSG1).append(SPACE).append(MAX_LINES).append(SPACE)
+	    			description.append(CONSOLE_LOG_MSG1).append(SPACE).append(maxLogLines).append(SPACE)
 	    			.append(CONSOLE_LOG_MSG2).append(COLON).append(NEW_LINE);
 	    			for(String log : logLines) {
 	    				description.append(log).append(NEW_LINE);
@@ -147,9 +149,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
     		} catch(Exception e) {
     			//Ignore
     		}
-	    } else {
-	    	description.append(build.getBuildStatusSummary().message).append(NEW_LINE);
-	    }
+	    } 
     	
         return description.toString();
     }
