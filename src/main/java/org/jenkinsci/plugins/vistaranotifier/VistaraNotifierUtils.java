@@ -42,7 +42,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
     	vistaraAlert.setServiceName(DEFAULT_METRIC);
     	vistaraAlert.setApp(JENKINS);
     	vistaraAlert.setExtAlertId(String.valueOf(build.getNumber()));
-    	vistaraAlert.setUniqueId(String.valueOf(build.getNumber()));
+    	vistaraAlert.setUniqueId(build.getProject().getName());
     	
     	return vistaraAlert;
     }
@@ -138,7 +138,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
     			if(build.getResult() != Result.FAILURE) { //Don't get max lines if it is other than failure
     				maxLogLines = MIN_LINES;
     			}
-	    		List<String> logLines = build.getLog(MAX_LINES);
+	    		List<String> logLines = build.getLog(maxLogLines);
 	    		if(logLines != null && !logLines.isEmpty()) {
 	    			description.append(CONSOLE_LOG_MSG1).append(SPACE).append(maxLogLines).append(SPACE)
 	    			.append(CONSOLE_LOG_MSG2).append(COLON).append(NEW_LINE);
