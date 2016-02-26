@@ -48,7 +48,7 @@ public interface VistaraNotifierConstants {
 	public final static String CLIENT_ID_ERR_MSG		= "Please specify a valid Vistara clientId here";
 	public final static String BASE_URI_ERR_MSG			= "Please specify a valid Vistara base URI here";
 	
-	public final static String DESC_BUILD_USER			= "Build triggered by";
+	public final static String DESC_BUILD_USER			= "Build started by";
 	public final static String DESC_CHANGE_LOG			= "Change log";
 	public final static String DESC_SUMMARY				= "Summary";
 	public final static String DEFAULT_METRIC			= "Build progress";

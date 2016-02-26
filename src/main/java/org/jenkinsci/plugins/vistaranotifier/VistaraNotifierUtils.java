@@ -14,6 +14,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.Cause;
 import hudson.model.Result;
 import hudson.model.Cause.UserIdCause;
+import hudson.model.Cause.UpstreamCause;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.ChangeLogSet.AffectedFile;
 import jenkins.model.Jenkins;
@@ -26,7 +27,7 @@ import net.sf.json.JSONObject;
  */
 public class VistaraNotifierUtils implements VistaraNotifierConstants {
 	
-	/** Prepare Vistara alert object 
+	/** Method to prepare Vistara alert object 
 	 * @param build
 	 * @param state
 	 * @return
@@ -47,7 +48,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
     	return vistaraAlert;
     }
 	
-	/** Prepare Vistara alert subject
+	/** Method to prepare Vistara alert subject
 	 * @param build
 	 * @param state
 	 * @return
@@ -63,7 +64,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
         return subject;
     }
 	
-	/** Prepare Vistara alert description
+	/** Method to prepare Vistara alert description
 	 * 
 	 * STARTED - send all change log, name, number, URL details as alert description along with build summary
 	 * FAILED  - send last 200 lines console output as description along with build summary
@@ -74,87 +75,121 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
 	 * @return
 	 */
 	public static String prepareAlertDescription(AbstractBuild<?, ?> build, String state, String subject) {
-    	final AbstractBuild<?, ?> rootBuild = build.getRootBuild();
-    	
     	StringBuffer description = new StringBuffer(subject).append(NEW_LINE);
     	if(state.equals(STARTED)) {
 	    	//Build triggered by
-	        List<Cause> causes = build.getCauses();
-	        String buildUser = null;
-	        if (causes.size() > 0 && (causes.get(0) instanceof Cause.UserIdCause)){
-	        	buildUser =  ((UserIdCause)causes.get(0)).getUserName();
-	        } else {
-	        	buildUser = ANONYMOUS_USER;
-	        }
+	        String buildUser = prepareBuildUser(build.getCauses());
 	        
 	        //Change log details
-	        StringBuffer changeLog = new StringBuffer(EMPTY_STR);
-	        StringBuffer summary = new StringBuffer(EMPTY_STR);
-	        ChangeLogSet<? extends ChangeLogSet.Entry> changeSet = rootBuild.getChangeSet();
-	        List<ChangeLogSet.Entry> entries = new LinkedList<ChangeLogSet.Entry>();
-	        for(Object o : changeSet.getItems()) {
-	        	ChangeLogSet.Entry entry = (ChangeLogSet.Entry) o;
-	            entries.add(entry);
-	        }
-	        
-	        if(entries.isEmpty()) {
-	            if(build.getDescription() != null && !build.getDescription().equals(EMPTY_STR)) {
-	            	changeLog.append(build.getDescription());
-	            } else { 
-	             	changeLog.append(causes.get(0).getShortDescription());
-	            }
-	        } else {
-	            for(ChangeLogSet.Entry entry : entries) {
-	            	summary.append(entry.getCommitId() + COLON + entry.getMsg() + NEW_LINE);
-	                changeLog.append(REV_STR).append(SPACE).append(BY_STR).append(SPACE)
-	                .append(entry.getAuthor().getDisplayName()).append(COLON).append(NEW_LINE)
-	                .append(entry.getCommitId()).append(COLON).append(entry.getMsg()).append(NEW_LINE);
-	                
-	                if(entry.getAffectedFiles() != null && entry.getAffectedFiles().size() > 0) {
-		                Iterator<?extends AffectedFile> files = entry.getAffectedFiles().iterator();
-		                changeLog.append(FILE_PATH).append(COLON).append(SPACE);
-		                while(files.hasNext()) {
-		                	AffectedFile file = files.next();
-		                	changeLog.append(file.getPath()).append(NEW_LINE);
-		                }
-	                }
-	                changeLog.append(NEW_LINE);
-	            }
-	        }
+	        String changeLog = prepareChanelogDetails(build, build.getCauses());
 	        
 	        description.append(BUILD_NAME).append(COLON).append(SPACE).append(build.getProject().getName()).append(NEW_LINE)
 	        .append(BUILD_NUMBER).append(COLON).append(SPACE + build.getNumber()).append(NEW_LINE)
 	        .append(BUILD_URL).append(COLON).append(SPACE).append(build.getUrl()).append(NEW_LINE)
 	        .append(BUILD_FULL_URL).append(COLON).append(SPACE).append(Jenkins.getInstance().getRootUrl()).append(build.getUrl()).append(NEW_LINE)
-	        .append(DESC_BUILD_USER + COLON + SPACE + buildUser + NEW_LINE);
-	        if(!summary.toString().equals(EMPTY_STR)) {
-	        	description.append(DESC_SUMMARY).append(COLON).append(NEW_LINE).append(summary.toString()).append(NEW_LINE);
-	        }
-	        
-	        description.append(DESC_CHANGE_LOG).append(COLON).append(NEW_LINE).append(changeLog.toString());
+	        .append(DESC_BUILD_USER + COLON + SPACE + buildUser + NEW_LINE)
+	        .append(DESC_CHANGE_LOG).append(COLON).append(NEW_LINE).append(changeLog.toString());
     	} else if(state.equals(FAILED)) {
-    		try {
-    			int maxLogLines = MAX_LINES;
-    			if(build.getResult() != Result.FAILURE) { //Don't get max lines if it is other than failure
-    				maxLogLines = MIN_LINES;
-    			}
-	    		List<String> logLines = build.getLog(maxLogLines);
-	    		if(logLines != null && !logLines.isEmpty()) {
-	    			description.append(CONSOLE_LOG_MSG1).append(SPACE).append(maxLogLines).append(SPACE)
-	    			.append(CONSOLE_LOG_MSG2).append(COLON).append(NEW_LINE);
-	    			for(String log : logLines) {
-	    				description.append(log).append(NEW_LINE);
-	    			}
-	    		}
-    		} catch(Exception e) {
-    			//Ignore
+    		String consoleLog = prepareConsoleLog(build);
+    		if(!consoleLog.equals(EMPTY_STR)) {
+    			description.append(consoleLog);
     		}
 	    } 
     	
         return description.toString();
     }
 	
-	/** Prepare hosts details
+	/** Method to prepare build started user
+	 * @param causes
+	 * @return
+	 */
+	private static String prepareBuildUser(List<Cause> causes) {
+		String buildUser = ANONYMOUS_USER;
+        if(causes != null && causes.size() > 0) {
+	        if(causes.get(0) instanceof UserIdCause){
+	        	buildUser =  ((UserIdCause)causes.get(0)).getUserName();
+	        } else if(causes.get(0) instanceof UpstreamCause) {
+	        	List<Cause> upstreamCauses = ((UpstreamCause)causes.get(0)).getUpstreamCauses();
+	        	prepareBuildUser(upstreamCauses);
+	        } 
+        }
+        return buildUser;
+	}
+	
+	/** Method to prepare build change log details
+	 * @param build
+	 * @param causes
+	 * @return
+	 */
+	private static String prepareChanelogDetails(AbstractBuild<?, ?> build, List<Cause> causes) {
+		StringBuilder changeLog = new StringBuilder(EMPTY_STR);
+        StringBuilder summary = new StringBuilder(EMPTY_STR);
+        ChangeLogSet<? extends ChangeLogSet.Entry> changeSet = build.getRootBuild().getChangeSet();
+        List<ChangeLogSet.Entry> entries = new LinkedList<ChangeLogSet.Entry>();
+        for(Object o : changeSet.getItems()) {
+        	ChangeLogSet.Entry entry = (ChangeLogSet.Entry) o;
+            entries.add(entry);
+        }
+        
+        if(entries.isEmpty()) {
+            if(build.getDescription() != null && !build.getDescription().equals(EMPTY_STR)) {
+            	changeLog.append(build.getDescription());
+            } else { 
+             	changeLog.append(causes.get(0).getShortDescription());
+            }
+        } else {
+            for(ChangeLogSet.Entry entry : entries) {
+            	summary.append(entry.getCommitId() + COLON + entry.getMsg() + NEW_LINE);
+                changeLog.append(REV_STR).append(SPACE).append(BY_STR).append(SPACE)
+                .append(entry.getAuthor().getDisplayName()).append(COLON).append(NEW_LINE)
+                .append(entry.getCommitId()).append(COLON).append(entry.getMsg()).append(NEW_LINE);
+                
+                if(entry.getAffectedFiles() != null && entry.getAffectedFiles().size() > 0) {
+	                Iterator<?extends AffectedFile> files = entry.getAffectedFiles().iterator();
+	                changeLog.append(FILE_PATH).append(COLON).append(SPACE);
+	                while(files.hasNext()) {
+	                	AffectedFile file = files.next();
+	                	changeLog.append(file.getPath()).append(NEW_LINE);
+	                }
+                }
+                changeLog.append(NEW_LINE);
+            }
+        }
+        
+        if(!summary.toString().equals(EMPTY_STR)) {
+        	summary.insert(0, DESC_SUMMARY + COLON + NEW_LINE);
+        	changeLog.insert(0, summary.toString() + NEW_LINE);
+        }
+        return changeLog.toString();
+	}
+	
+	/** Method to prepare console output
+	 * @param build
+	 * @return
+	 */
+	private static String prepareConsoleLog(AbstractBuild<?, ?> build) {
+		StringBuilder consoleLog = new StringBuilder(EMPTY_STR);
+		try {
+			int maxLogLines = MAX_LINES;
+			if(build.getResult() != Result.FAILURE) { //Don't get max lines if it is other than failure
+				maxLogLines = MIN_LINES;
+			}
+    		List<String> logLines = build.getLog(maxLogLines);
+    		if(logLines != null && !logLines.isEmpty()) {
+    			consoleLog.append(CONSOLE_LOG_MSG1).append(SPACE).append(maxLogLines).append(SPACE)
+    			.append(CONSOLE_LOG_MSG2).append(COLON).append(NEW_LINE);
+    			for(String log : logLines) {
+    				consoleLog.append(log).append(NEW_LINE);
+    			}
+    		}
+		} catch(Exception e) {
+			//Ignore
+		}
+		
+		return consoleLog.toString();
+	}
+	
+	/** Method to prepare hosts details
 	 * @param build
 	 * @return
 	 */
@@ -173,7 +208,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
         return vistaraDevice;
 	}
 	
-	/** Prepare Vistara alert state based on build status
+	/** Method to prepare Vistara alert state based on build status
 	 * @param state
 	 * @return
 	 */
@@ -193,12 +228,13 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
 		}
 	}
 	
-	/** Prepare Vistara alert JSON body
+	/** Method to prepare build status details as JSON body
      * @param build
      * @param state
      * @return
      */
     @SuppressWarnings("unused")
+    @Deprecated
 	private String prepareVistaraAlertJson(AbstractBuild<?, ?> build, String state) {
     	final AbstractBuild<?, ?> rootBuild = build.getRootBuild();
         JSONObject json = new JSONObject();
