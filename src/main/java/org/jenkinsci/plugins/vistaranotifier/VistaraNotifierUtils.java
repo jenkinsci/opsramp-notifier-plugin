@@ -115,10 +115,10 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
 		                changeLog.append(FILE_PATH).append(COLON).append(SPACE);
 		                while(files.hasNext()) {
 		                	AffectedFile file = files.next();
-		                	changeLog.append(file.getPath());
+		                	changeLog.append(file.getPath()).append(NEW_LINE);
 		                }
 	                }
-	                changeLog.append(NEW_LINE).append(NEW_LINE);
+	                changeLog.append(NEW_LINE);
 	            }
 	        }
 	        
