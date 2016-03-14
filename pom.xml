@@ -34,12 +34,19 @@
     <relativePath />
   </parent>
   <artifactId>vistara-notifier</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>hpi</packaging>
-
   <name>Vistara Notifier Plugin</name>
   <description>Vistara notification plugin</description>
-  <url>http://vistarait.com</url>
+  <url>https://wiki.jenkins-ci.org/display/JENKINS/Vistara+Alert+Notifier+Plugin</url>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>hpi</packaging>
+  
+  <scm>
+  	<connection>scm:git:ssh://github.com/jenkinsci/vistara-notifier-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/vistara-notifier-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/vistara-notifier-plugin</url>
+    <tag>HEAD</tag>
+  </scm>
+  
   <licenses>
     <license>
       <name>MIT License</name>
@@ -48,7 +55,7 @@
   </licenses>
   <developers>
     <developer>
-      <id>Srini T</id>
+      <id>srinut096</id>
       <name>Srinivasulu Tirupatipati</name>
       <email>srinut096@gmail.com</email>
     </developer>

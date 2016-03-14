@@ -36,7 +36,7 @@ public interface VistaraNotifierConstants {
 	public final static String FAILED 					= "Failed";
 	public final static String DEFAULT_NODE 			= "master";
 	public final static String ANONYMOUS_USER			= "anonymous";
-	public final static String VISTARA_DISPLAY_NAME 	= "Vistara notification";
+	public final static String VISTARA_DISPLAY_NAME 	= "Notify Vistara";
 	
 	//Tags
 	public final static String BUILD_NAME 				= "Name";
