@@ -82,4 +82,47 @@ public interface VistaraNotifierConstants {
 	public final static String CONSOLE_LOG_MSG2			= "lines of console output";
 	public final static int MAX_LINES					= 100;
 	public final static int MIN_LINES					= 20;
+	
+	//JSON
+	public static final String STATUS 					= "status";
+	public static final String STATUS_MESSAGE 			= "status_message";
+	public static final String EMPTY_STRING				= "";
+	
+	//Error messages
+	public static final String INVALID_JSON_PAYLOAD		= "JsonPayload should not be null or empty.";
+	public static final String INVALID_ACCESS_TOKEN		= "Access Token should not be null or empty.";
+	public static final String POST_FAILED				= "Failed to POST data to Vistara, Reson :";
+	public static final String HTTP_REQ_FAILED			= "Failed to send http request, Reason: ";
+	
+	//API URLs
+	public static final String VISTAR_API_BASE_URI		= "https://api.vistara.io";
+	public static final String OAUTH2_START_URL			= "/api/v2/tenants/";
+	public static final String ACCESS_TOKEN_PATH        = "/auth/oauth/token";
+	public static final String ALERTS        			= "/alerts";
+	
+	//HTTP
+	public static final String UTF_8					= "UTF-8";
+	public static final String ACCEPT					= "Accept";
+	public static final String CONTENT_TYPE				= "Content-Type";
+	public static final String AUTHORIZATION			= "Authorization";
+	public static final String BEARER					= "bearer ";
+	
+	public static final String ACCESS_TOKEN 			= "access_token";
+	public static final String CLIENT_ID 				= "client_id";
+	public static final String CLIENT_SECRET 			= "client_secret";
+	public static final String GRANT_TYPE 				= "grant_type";
+	public static final String GRANT_TYPE_CLIENT_CREDS 	= "client_credentials";
+	
+	public static final String INFO						= "Info";
+	public static final String WARNING					= "Warning";
+	public static final String CRITICAL					= "Critical";
+	public static final String OK						= "Ok";
+	
+	public static final int HTTP_OK 					= 200;
+	public static final int HTTP_FORBIDDEN 				= 403;
+	public static final int HTTP_UNAUTHORIZED 			= 401;
+	public static final int HTTP_ACCESS_TOKEN_EXPIRED 	= 407;
+	
+	public static final String ACCESS_TOKEN_EXPIRED 	= "access token expired";
+		
 }

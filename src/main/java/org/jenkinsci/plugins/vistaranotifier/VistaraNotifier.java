@@ -33,8 +33,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
-import com.vistara.sdk.alert.AlertAPIClient;
-
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -106,14 +104,15 @@ public class VistaraNotifier extends Notifier implements VistaraNotifierConstant
        }
        
        try {
-    	   AlertAPIClient apiClient = AlertAPIClient.getInstance(descriptor.getVistaraClientId(), JENKINS);
-    	   apiClient.setApiBaseURI(descriptor.getVistaraBaseURI());
-    	   apiClient.setOAUTH2Authentication(descriptor.getVistaraApiKey(), descriptor.getVistaraApiSecret());
-       	   
-       	   apiClient.createAlert(VistaraNotifierUtils.prepareVistaraAlert(build, state));
+    	   VistaraNotifierClient apiClient = new VistaraNotifierClient(descriptor.getVistaraBaseURI(),
+    			   descriptor.getVistaraClientId(), descriptor.getVistaraApiKey(), descriptor.getVistaraApiSecret());
+    	   
+    	   String alertPayload = VistaraNotifierUtils.prepareVistaraAlert(build, state);
+   		   String response = apiClient.createAlert(alertPayload);
+   		   logger.println("Vistara notifier response: " + response);
        } catch (Exception e){
-           logger.println(e.toString());
-           return false;
+           logger.println("Failed to send notification to Vistara, Reason: " + e.toString());
+           //return false;
        }
        return true;
     }

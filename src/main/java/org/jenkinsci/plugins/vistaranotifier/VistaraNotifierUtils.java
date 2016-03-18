@@ -23,21 +23,21 @@
  */
 package org.jenkinsci.plugins.vistaranotifier;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.vistara.sdk.dto.alert.Alert;
-import com.vistara.sdk.dto.device.Device;
-import com.vistara.sdk.utils.APIConstants;
-import com.vistara.sdk.utils.TimeUtils;
+import com.google.gson.Gson;
 
 import hudson.model.AbstractBuild;
 import hudson.model.Cause;
 import hudson.model.Result;
-import hudson.model.Cause.UserIdCause;
 import hudson.model.Cause.UpstreamCause;
+import hudson.model.Cause.UserIdCause;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.ChangeLogSet.AffectedFile;
 import jenkins.model.Jenkins;
@@ -55,20 +55,30 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
 	 * @param state
 	 * @return
 	 */
-	public static Alert prepareVistaraAlert(AbstractBuild<?, ?> build, String state) {
-    	Alert vistaraAlert = new Alert();
-    	
-    	vistaraAlert.setSubject(prepareAlertSubject(build, state));
-    	vistaraAlert.setCurrentState(prepareAlertState(state));
-    	vistaraAlert.setDescription(prepareAlertDescription(build, state, vistaraAlert.getSubject()));
-    	vistaraAlert.setDevice(prepareHost(build));
-    	vistaraAlert.setAlertTime(TimeUtils.getDateTime(TimeUtils.DB_DATE_FORMAT, new Date()));
-    	vistaraAlert.setServiceName(DEFAULT_METRIC);
-    	vistaraAlert.setApp(JENKINS);
-    	vistaraAlert.setExtAlertId(String.valueOf(build.getNumber()));
-    	vistaraAlert.setUniqueId(build.getProject().getName());
-    	
-    	return vistaraAlert;
+	public static String prepareVistaraAlert(AbstractBuild<?, ?> build, String state) {
+		List<HashMap<String, Object>> alertsMap = new ArrayList<HashMap<String, Object>>();
+		HashMap<String, Object> alertMap = new HashMap<String, Object>();
+		
+		String subject = prepareAlertSubject(build, state);
+		alertMap.put("subject", subject);
+		alertMap.put("description", prepareAlertDescription(build, state, subject));
+		alertMap.put("currentState", prepareAlertState(state));
+		alertMap.put("alertTime", prepareAlertTime("yyyy-MM-dd HH:mm:ss", new Date()));
+		alertMap.put("serviceName", DEFAULT_METRIC);
+		alertMap.put("app", JENKINS);
+		alertMap.put("extAlertId", String.valueOf(build.getNumber()));
+		alertMap.put("uniqueId", build.getProject().getName());
+		
+		HashMap<String, String> device = new HashMap<String, String>();
+		device.put("hostName", prepareHost(build));
+		alertMap.put("device", device);
+		
+		alertsMap.add(alertMap);
+		
+		Gson gson = new Gson(); 
+	    String jsonPayload = gson.toJson(alertsMap);
+		
+    	return jsonPayload.toString();
     }
 	
 	/** Method to prepare Vistara alert subject
@@ -216,7 +226,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
 	 * @param build
 	 * @return
 	 */
-	public static Device prepareHost(AbstractBuild<?, ?> build) {
+	public static String prepareHost(AbstractBuild<?, ?> build) {
         String nodeName = build.getBuiltOn().getNodeName();
         if (!build.getProject().getName().equals(build.getRootBuild().getProject().getName())) {
             nodeName = build.getProject().getName();  //label
@@ -225,30 +235,47 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
             nodeName = DEFAULT_NODE;
         }
         
-        Device vistaraDevice = new Device();
-    	vistaraDevice.setHostName(nodeName);
-        
-        return vistaraDevice;
+        return nodeName;
 	}
 	
 	/** Method to prepare Vistara alert state based on build status
 	 * @param state
 	 * @return
 	 */
-	public static String prepareAlertState(String state) {
+	private static String prepareAlertState(String state) {
 		if(state == null || state.equals(EMPTY_STR)) {
-			return APIConstants.INFO;
+			return INFO;
 		}
 		
 		if(state.equals(STARTED)) {
-			return APIConstants.WARNING;
+			return WARNING;
 		} else if(state.equals(FAILED)) {
-			return APIConstants.CRITICAL;
+			return CRITICAL;
 		} else if(state.equals(SUCCESS)) {
-			return APIConstants.OK;
+			return OK;
 		} else {
-			return APIConstants.INFO;
+			return INFO;
 		}
+	}
+	
+	/** Method to prepare Vistara alert time
+	 * @param aMask
+	 * @param aDate
+	 * @return
+	 */
+	private static String prepareAlertTime(String aMask, Date aDate) {
+	    SimpleDateFormat df = null;
+	    String returnValue = "";
+	
+	    if (aDate == null) {
+	        //log.error("aDate is null!");
+	        return "";
+	    } else {
+	        df = new SimpleDateFormat(aMask);
+	        returnValue = df.format(aDate);
+	    }
+	
+	    return (returnValue);
 	}
 	
 	/** Method to prepare build status details as JSON body
