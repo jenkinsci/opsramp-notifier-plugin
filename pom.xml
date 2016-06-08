@@ -44,7 +44,7 @@
   	<connection>scm:git:ssh://github.com/jenkinsci/vistara-notifier-plugin.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/jenkinsci/vistara-notifier-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/vistara-notifier-plugin</url>
-    <tag>vistara-notifier-1.0</tag>
+    <tag>HEAD</tag>
   </scm>
   
   <build>
