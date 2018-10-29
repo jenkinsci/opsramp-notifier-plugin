@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jenkinsci.plugins.vistaranotifier;
+package org.jenkinsci.plugins.opsrampnotifier;
 
 /**
  * @author Srini T
  *
  */
-public interface VistaraNotifierConstants {
+public interface OpsRampNotifierConstants {
 	
 	//Constants
 	public final static String JENKINS					= "Jenkins";
@@ -59,17 +59,17 @@ public interface VistaraNotifierConstants {
 	public final static String NEW_LINE					= "\n";
 	
 	//Parameters
-	public final static String CLIENT_ID_PARAM			= "vistaraClientId";
-	public final static String API_KEY_PARAM			= "vistaraApiKey";
-	public final static String API_SECRET_PARAM			= "vistaraApiSecret";
-	public final static String BASE_URI_PARAM			= "vistaraBaseURI";
+	public final static String CLIENT_ID_PARAM			= "opsrampClientId";
+	public final static String API_KEY_PARAM			= "opsrampApiKey";
+	public final static String API_SECRET_PARAM			= "opsrampApiSecret";
+	public final static String BASE_URI_PARAM			= "opsrampBaseURI";
 	
 	//Error messages
-	public final static String TOKEN_ERR_MSG			= "Please specify a valid Vistara token here";
-	public final static String API_KEY_ERR_MSG			= "Please specify a valid Vistara API key here";
-	public final static String API_SECRET_ERR_MSG		= "Please specify a valid Vistara API secret here";
-	public final static String CLIENT_ID_ERR_MSG		= "Please specify a valid Vistara clientId here";
-	public final static String BASE_URI_ERR_MSG			= "Please specify a valid Vistara base URI here";
+	public final static String TOKEN_ERR_MSG			= "Please specify a valid OpsRamp token here";
+	public final static String API_KEY_ERR_MSG			= "Please specify a valid OpsRamp API key here";
+	public final static String API_SECRET_ERR_MSG		= "Please specify a valid OpsRamp API secret here";
+	public final static String CLIENT_ID_ERR_MSG		= "Please specify a valid OpsRamp clientId here";
+	public final static String BASE_URI_ERR_MSG			= "Please specify a valid OpsRamp base URI here";
 	
 	public final static String DESC_BUILD_USER			= "Build started by";
 	public final static String DESC_CHANGE_LOG			= "Change log";

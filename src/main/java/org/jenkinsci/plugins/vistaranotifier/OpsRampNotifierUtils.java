@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright  2016 VistaraIT, Inc. All Rights Reserved.
+ * Copyright  2018 OpsRamp, Inc. All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jenkinsci.plugins.vistaranotifier;
+package org.jenkinsci.plugins.opsrampnotifier;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,14 +48,14 @@ import net.sf.json.JSONObject;
  * @author Srini T
  *
  */
-public class VistaraNotifierUtils implements VistaraNotifierConstants {
+public class OpsRampNotifierUtils implements OpsRampNotifierConstants {
 	
-	/** Method to prepare Vistara alert object 
+	/** Method to prepare OpsRamp alert object 
 	 * @param build
 	 * @param state
 	 * @return
 	 */
-	public static String prepareVistaraAlert(AbstractBuild<?, ?> build, String state) {
+	public static String prepareOpsRampAlert(AbstractBuild<?, ?> build, String state) {
 		List<HashMap<String, Object>> alertsMap = new ArrayList<HashMap<String, Object>>();
 		HashMap<String, Object> alertMap = new HashMap<String, Object>();
 		
@@ -81,7 +81,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
     	return jsonPayload.toString();
     }
 	
-	/** Method to prepare Vistara alert subject
+	/** Method to prepare OpsRamp alert subject
 	 * @param build
 	 * @param state
 	 * @return
@@ -97,7 +97,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
         return subject;
     }
 	
-	/** Method to prepare Vistara alert description
+	/** Method to prepare OpsRamp alert description
 	 * 
 	 * STARTED - send all change log, name, number, URL details as alert description along with build summary
 	 * FAILED  - send last 200 lines console output as description along with build summary
@@ -238,7 +238,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
         return nodeName;
 	}
 	
-	/** Method to prepare Vistara alert state based on build status
+	/** Method to prepare OpsRamp alert state based on build status
 	 * @param state
 	 * @return
 	 */
@@ -258,7 +258,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
 		}
 	}
 	
-	/** Method to prepare Vistara alert time
+	/** Method to prepare OpsRamp alert time
 	 * @param aMask
 	 * @param aDate
 	 * @return
@@ -285,7 +285,7 @@ public class VistaraNotifierUtils implements VistaraNotifierConstants {
      */
     @SuppressWarnings("unused")
     @Deprecated
-	private String prepareVistaraAlertJson(AbstractBuild<?, ?> build, String state) {
+	private String prepareOpsRampAlertJson(AbstractBuild<?, ?> build, String state) {
     	final AbstractBuild<?, ?> rootBuild = build.getRootBuild();
         JSONObject json = new JSONObject();
         

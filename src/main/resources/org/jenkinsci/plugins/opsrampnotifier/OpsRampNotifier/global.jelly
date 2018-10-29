@@ -1,7 +1,7 @@
 <!--
 ~ The MIT License
 ~
-~ Copyright  2016 VistaraIT, Inc. All Rights Reserved.
+~ Copyright  2018 OpsRamp, Inc. All Rights Reserved.
 ~
 ~ Permission is hereby granted, free of charge, to any person obtaining a copy
 ~ of this software and associated documentation files (the "Software"), to deal
@@ -23,36 +23,36 @@
 -->
 
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <f:section title="Vistara Notifier">
+  <f:section title="OpsRamp Notifier">
     <f:entry title="Client ID"
-          field="vistaraClientId"
-          name="vistaraClientId"
-          value="${descriptor.getVistaraClientId()}"
-          help="${rootUrl}/plugin/vistara-notifier/help-vistara-clientid.html">
+          field="opsRampClientId"
+          name="opsRampClientId"
+          value="${descriptor.getOpsRampClientId()}"
+          help="${rootUrl}/plugin/opsramp-notifier/help-opsRamp-clientid.html">
           <f:textbox />
         </f:entry>
     <f:entry title="API Key"
-      name="vistaraApiKey"
-      field="vistaraApiKey"
-      value="${descriptor.getVistaraApiKey()}"
-      help="${rootUrl}/plugin/vistara-notifier/help-vistara-api-key.html">
+      name="opsRampApiKey"
+      field="opsRampApiKey"
+      value="${descriptor.getOpsRampApiKey()}"
+      help="${rootUrl}/plugin/opsramp-notifier/help-opsramp-api-key.html">
       <f:textbox />
     </f:entry>
     <f:entry title="API Secret"
-      name="vistaraApiSecret"
-      field="vistaraApiSecret"
-      value="${descriptor.getVistaraApiSecret()}"
-      help="${rootUrl}/plugin/vistara-notifier/help-vistara-api-secret.html">
+      name="opsRampApiSecret"
+      field="opsRampApiSecret"
+      value="${descriptor.getOpsRampApiSecret()}"
+      help="${rootUrl}/plugin/opsramp-notifier/help-opsramp-api-secret.html">
       <f:password />
     </f:entry>
     <f:advanced>    	
         <f:entry title="Base URI"
-          field="vistaraBaseURI"
-          name="vistaraBaseURI"
-          value="${descriptor.getvistaraBaseURI()}"
-          help="${rootUrl}/plugin/vistara-notifier/help-vistara-url.html">
+          field="opsRampBaseURI"
+          name="opsRampBaseURI"
+          value="${descriptor.getOpsRampBaseURI()}"
+          help="${rootUrl}/plugin/opsramp-notifier/help-opsramp-url.html">
           <f:textbox
-              default="${descriptor.getVistaraDefaultBaseURI()}"
+              default="${descriptor.getOpsRampDefaultBaseURI()}"
           />
         </f:entry>
     </f:advanced>

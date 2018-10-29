@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright  2016 VistaraIT, Inc. All Rights Reserved.
+ * Copyright  2018 OpsRamp, Inc. All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.jenkinsci.plugins.vistaranotifier;
+package org.jenkinsci.plugins.opsrampnotifier;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -46,17 +46,17 @@ import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 import net.sf.json.JSONObject;
 
-/**A class to notify Vistara about build status
+/**A class to notify OpsRamp about build status
  * @author Srini T
  *
  */
-public class VistaraNotifier extends Notifier implements VistaraNotifierConstants {
+public class OpsRampNotifier extends Notifier implements OpsRampNotifierConstants {
 	
     /**
      * Constructor
      */
     @DataBoundConstructor
-    public VistaraNotifier() {
+    public OpsRampNotifier() {
     }
 
     /* (non-Javadoc)
@@ -97,21 +97,21 @@ public class VistaraNotifier extends Notifier implements VistaraNotifierConstant
     private boolean processEvent(final AbstractBuild<?, ?> build, final BuildListener listener, final String state) {
 	   PrintStream logger = listener.getLogger();
        
-	   VistaraDescriptor descriptor = getDescriptor();
+	   OpsRampDescriptor descriptor = getDescriptor();
        if (!descriptor.isEnabled()){
-           logger.println("WARNING: Vistara Notification Disabled - Not configured.");
+           logger.println("WARNING: OpsRamp Notification Disabled - Not configured.");
            return true; //NOTE: Don't fail build because of our notification...
        }
        
        try {
-    	   VistaraNotifierClient apiClient = new VistaraNotifierClient(descriptor.getVistaraBaseURI(),
-    			   descriptor.getVistaraClientId(), descriptor.getVistaraApiKey(), descriptor.getVistaraApiSecret());
+    	   OpsRampNotifierClient apiClient = new OpsRampNotifierClient(descriptor.getOpsRampBaseURI(),
+    			   descriptor.getOpsRampClientId(), descriptor.getOpsRampApiKey(), descriptor.getOpsRampApiSecret());
     	   
-    	   String alertPayload = VistaraNotifierUtils.prepareVistaraAlert(build, state);
+    	   String alertPayload = OpsRampNotifierUtils.prepareOpsRampAlert(build, state);
    		   String response = apiClient.createAlert(alertPayload);
-   		   logger.println("Vistara notifier response: " + response);
+   		   logger.println("OpsRamp notifier response: " + response);
        } catch (Exception e){
-           logger.println("Failed to send notification to Vistara, Reason: " + e.toString());
+           logger.println("Failed to send notification to OpsRamp, Reason: " + e.toString());
            //return false;
        }
        return true;
@@ -121,8 +121,8 @@ public class VistaraNotifier extends Notifier implements VistaraNotifierConstant
      * @see hudson.tasks.Notifier#getDescriptor()
      */
     @Override
-    public VistaraDescriptor getDescriptor() {
-        return (VistaraDescriptor)super.getDescriptor();
+    public OpsRampDescriptor getDescriptor() {
+        return (OpsRampDescriptor)super.getDescriptor();
     }
 
     /**
@@ -130,71 +130,71 @@ public class VistaraNotifier extends Notifier implements VistaraNotifierConstant
      *
      */
     @Extension
-    public static final class VistaraDescriptor extends BuildStepDescriptor<Publisher> {
-    	private String vistaraClientId;
-		private String vistaraApiKey;
-		private String vistaraApiSecret;
-		private String vistaraBaseURI;
-		private final String vistaraDefaultBaseURI = "https://api.vistara.io";
+    public static final class OpsRampDescriptor extends BuildStepDescriptor<Publisher> {
+    	private String opsRampClientId;
+		private String opsRampApiKey;
+		private String opsRampApiSecret;
+		private String opsRampBaseURI;
+		private final String opsRampDefaultBaseURI = "https://api.opsramp.com";
 		
-		 public VistaraDescriptor() {
+		 public OpsRampDescriptor() {
 	            load();
 	        }
 		/**
 		 * @return
 		 */
 		public boolean isEnabled() {
-			return getVistaraApiKey() != null && getVistaraApiSecret() != null && 
-					getVistaraClientId() != null && getVistaraBaseURI() != null;
+			return getOpsRampApiKey() != null && getOpsRampApiSecret() != null && 
+					getOpsRampClientId() != null && getOpsRampBaseURI() != null;
 		}
 		
 		/**
 		 * @return
 		 */
-		public String getVistaraDefaultBaseURI() {
-		    return vistaraDefaultBaseURI;
+		public String getOpsRampDefaultBaseURI() {
+		    return opsRampDefaultBaseURI;
 		}
 		 
 		/**
 		 * @return
 		 */
-		public String getVistaraClientId() {
-			if(vistaraClientId == null || vistaraClientId.equals(EMPTY_STR)) {
+		public String getOpsRampClientId() {
+			if(opsRampClientId == null || opsRampClientId.equals(EMPTY_STR)) {
 				return null;
 			}
-			return vistaraClientId;
+			return opsRampClientId;
 		}
 		
 		/**
 		 * @return
 		 */
-		public String getVistaraApiKey() {
-			if(vistaraApiKey == null || vistaraApiKey.equals(EMPTY_STR)) {
+		public String getOpsRampApiKey() {
+			if(opsRampApiKey == null || opsRampApiKey.equals(EMPTY_STR)) {
 				return null;
 			}
-			return vistaraApiKey;
+			return opsRampApiKey;
 		}
 		
 		/**
 		 * @return
 		 */
-		public String getVistaraApiSecret() {
-			if(vistaraApiSecret == null || vistaraApiSecret.equals(EMPTY_STR)) {
+		public String getOpsRampApiSecret() {
+			if(opsRampApiSecret == null || opsRampApiSecret.equals(EMPTY_STR)) {
 				return null;
 			}
-			return vistaraApiSecret;
+			return opsRampApiSecret;
 		}
 		
 		/**
 		 * @return
 		 */
-		public String getVistaraBaseURI() {
-		    if (vistaraBaseURI == null){
-		        return vistaraBaseURI;
-		    } else if(vistaraBaseURI.equals(EMPTY_STR)) {
-		        return vistaraDefaultBaseURI;
+		public String getOpsRampBaseURI() {
+		    if (opsRampBaseURI == null){
+		        return opsRampBaseURI;
+		    } else if(opsRampBaseURI.equals(EMPTY_STR)) {
+		        return opsRampDefaultBaseURI;
 		    } 
-		    return vistaraBaseURI;
+		    return opsRampBaseURI;
 		}
 		
 		/* (non-Javadoc)
@@ -212,19 +212,19 @@ public class VistaraNotifier extends Notifier implements VistaraNotifierConstant
 		    return VISTARA_DISPLAY_NAME;
 		}
 		
-		/** Validate Vistara API key
+		/** Validate OpsRamp API key
 		 * @param value
 		 * @return
 		 * @throws IOException
 		 * @throws ServletException
 		 */
-		public FormValidation doCheckVistaraApiKey(@QueryParameter("vistaraApiKey") String value)
+		public FormValidation doCheckOpsRampApiKey(@QueryParameter("opsRampApiKey") String value)
 		    throws IOException, ServletException {
 			String apiKey = value;
 			if((apiKey != null) && (!apiKey.trim().equals(EMPTY_STR))) {
 				apiKey = apiKey.trim();
 			} else {
-				apiKey = vistaraApiKey != null ? vistaraApiKey.trim() : null;
+				apiKey = opsRampApiKey != null ? opsRampApiKey.trim() : null;
 			}
 		
 			if((apiKey == null) || apiKey.equals(EMPTY_STR)) {
@@ -234,19 +234,19 @@ public class VistaraNotifier extends Notifier implements VistaraNotifierConstant
 		    }
 		}
 		
-		/** Validate Vistara API secret
+		/** Validate OpsRamp API secret
 		 * @param value
 		 * @return
 		 * @throws IOException
 		 * @throws ServletException
 		 */
-		public FormValidation doCheckVistaraApiSecret(@QueryParameter("vistaraApiSecret") String value)
+		public FormValidation doCheckOpsRampApiSecret(@QueryParameter("opsRampApiSecret") String value)
 		    throws IOException, ServletException {
 			String apiSecret = value;
 			if((apiSecret != null) && (!apiSecret.trim().equals(EMPTY_STR))) {
 				apiSecret = apiSecret.trim();
 			} else {
-				apiSecret = vistaraApiSecret != null ? vistaraApiSecret.trim() : null;
+				apiSecret = opsRampApiSecret != null ? opsRampApiSecret.trim() : null;
 			}
 		
 			if((apiSecret == null) || apiSecret.equals(EMPTY_STR)) {
@@ -256,19 +256,19 @@ public class VistaraNotifier extends Notifier implements VistaraNotifierConstant
 		    }
 		}
 		
-		/** Validate Vistara client ID
+		/** Validate OpsRamp client ID
 		 * @param value
 		 * @return
 		 * @throws IOException
 		 * @throws ServletException
 		 */
-		public FormValidation doCheckVistaraClientId(@QueryParameter("vistaraClientId") String value)
+		public FormValidation doCheckOpsRampClientId(@QueryParameter("opsRampClientId") String value)
 		    throws IOException, ServletException {
 			String clientId = value;
 			if((clientId != null) && (!clientId.trim().equals(EMPTY_STR))) {
 				clientId = clientId.trim();
 			} else {
-				clientId = vistaraClientId != null ? vistaraClientId.trim() : null;
+				clientId = opsRampClientId != null ? opsRampClientId.trim() : null;
 			}
 		
 			if((clientId == null) || clientId.equals("")) {
@@ -278,19 +278,19 @@ public class VistaraNotifier extends Notifier implements VistaraNotifierConstant
 		    }
 		}
 		
-		/** Validate Vistara base URI
+		/** Validate OpsRamp base URI
 		 * @param value
 		 * @return
 		 * @throws IOException
 		 * @throws ServletException
 		 */
-		public FormValidation doCheckVistaraBaseURI(@QueryParameter("vistaraBaseURI") String value)
+		public FormValidation doCheckOpsRampBaseURI(@QueryParameter("opsRampBaseURI") String value)
 		    throws IOException, ServletException {
 			String url = value;
 			if((url != null) && (!url.trim().equals(EMPTY_STR))) {
 			    url = url.trim();
 			} else {
-			    url = vistaraBaseURI != null ? vistaraBaseURI.trim() : null;
+			    url = opsRampBaseURI != null ? opsRampBaseURI.trim() : null;
 			}
 			
 			try {
@@ -306,10 +306,10 @@ public class VistaraNotifier extends Notifier implements VistaraNotifierConstant
 		 */
 		@Override
 		public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {
-		    vistaraClientId = formData.getString(CLIENT_ID_PARAM);
-			vistaraApiKey = formData.getString(API_KEY_PARAM);
-			vistaraApiSecret = formData.getString(API_SECRET_PARAM);
-		    vistaraBaseURI = formData.getString(BASE_URI_PARAM);
+		    opsRampClientId = formData.getString(CLIENT_ID_PARAM);
+			opsRampApiKey = formData.getString(API_KEY_PARAM);
+			opsRampApiSecret = formData.getString(API_SECRET_PARAM);
+			opsRampBaseURI = formData.getString(BASE_URI_PARAM);
 		    save();
 		    return super.configure(req, formData);
 		}

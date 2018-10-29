@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins.vistaranotifier;
+package org.jenkinsci.plugins.opsrampnotifier;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,7 +40,7 @@ import com.google.gson.reflect.TypeToken;
  * @author Srini T
  *
  */
-public class VistaraNotifierClient implements VistaraNotifierConstants {
+public class OpsRampNotifierClient implements OpsRampNotifierConstants {
 	
 	private String apiKey 		= null;
 	private String apiSecret 	= null;
@@ -50,14 +50,14 @@ public class VistaraNotifierClient implements VistaraNotifierConstants {
 	/**
 	 * Constructor
 	 */
-	public VistaraNotifierClient(String apiBaseURI, String tenantId, String apiKey, String apiSecret) {
+	public OpsRampNotifierClient(String apiBaseURI, String tenantId, String apiKey, String apiSecret) {
 		this.apiBaseURI = apiBaseURI;
 		this.apiKey = apiKey;
 		this.apiSecret = apiSecret;
 		this.tenantId = tenantId;
 	}
 	
-	/** Method to Create Vistara alert using json payload
+	/** Method to Create OpsRamp alert using json payload
 	 * @param jsonPayload
 	 * @return Status code 
 	 * @throws Exception
@@ -71,7 +71,7 @@ public class VistaraNotifierClient implements VistaraNotifierConstants {
 		return postRequest(alertsEndPointURL, jsonPayload);
 	}
 	
-	/** POST request to Vistara 
+	/** POST request to OpsRamp 
 	 * @param url
 	 * @param jsonPayload
 	 * @return
