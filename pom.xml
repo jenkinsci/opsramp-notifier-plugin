@@ -2,7 +2,7 @@
 <!--
 ~ The MIT License
 ~
-~ Copyright  2016 VistaraIT, Inc. All Rights Reserved.
+~ Copyright  2018 OpsRamp, Inc. All Rights Reserved.
 ~
 ~ Permission is hereby granted, free of charge, to any person obtaining a copy
 ~ of this software and associated documentation files (the "Software"), to deal
@@ -33,17 +33,17 @@
     <version>1.605</version>
     <relativePath />
   </parent>
-  <artifactId>vistara-notifier</artifactId>
-  <name>Vistara Notifier Plugin</name>
-  <description>Vistara notification plugin</description>
-  <url>https://wiki.jenkins-ci.org/display/JENKINS/Vistara+Alert+Notifier+Plugin</url>
+  <artifactId>opsramp-notifier</artifactId>
+  <name>OpsRamp Notifier Plugin</name>
+  <description>OpsRamp notification plugin</description>
+  <url>https://wiki.jenkins-ci.org/display/JENKINS/OpsRamp+Alert+Notifier+Plugin</url>
   <version>1.0-SNAPSHOT</version>
   <packaging>hpi</packaging>
   
   <scm>
-  	<connection>scm:git:ssh://github.com/jenkinsci/vistara-notifier-plugin.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/vistara-notifier-plugin.git</developerConnection>
-    <url>https://github.com/jenkinsci/vistara-notifier-plugin</url>
+  	<connection>scm:git:ssh://github.com/jenkinsci/opsramp-notifier-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/jenkinsci/opsramp-notifier-plugin.git</developerConnection>
+    <url>https://github.com/jenkinsci/opsramp-notifier-plugin</url>
     <tag>HEAD</tag>
   </scm>
   

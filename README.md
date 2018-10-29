@@ -1,23 +1,23 @@
-# vistara-jenkins-plugin
-A Jenkins plugin to receive build status events as Vistara alerts
+# opsramp-jenkins-plugin
+A Jenkins plugin to receive build status events as OpsRamp alerts
 
 Requirements
 ============
 
-* An account at **[Vistara][]**
+* An account at **[OpsRamp][]**
 * ** Jenkins** integration should install
 * **Jenkins 1.605** or newer
 
 Usage
 =====
 
-Use the Vistara Notifier to get build status events as Vistara alerts.
+Use the OpsRamp Notifier to get build status events as OpsRamp alerts.
 
 1. In your Jenkins, define configuration details in global and use these details to invoke build notification statues. 
  a. Go to *Manage Jenkins* section
- b. Click on *Configure System*. At bottom, you will find *Vistara Notifier* section.
+ b. Click on *Configure System*. At bottom, you will find *OpsRamp Notifier* section.
  c. Enter required details  (*Client ID, API Key and API Secret*).
-2. In job configuration go to the *Post-build Actions* section, click on *Add post-build action* and select *Vistara  notification*
+2. In job configuration go to the *Post-build Actions* section, click on *Add post-build action* and select *OpsRamp  notification*
 
 If you have configured everything correctly, Jenkins will notify you build status events as alerts.
 
@@ -31,7 +31,7 @@ License
 
 	(The MIT License)
 
-	Copyright  2016 VistaraIT, Inc. All Rights Reserved.
+	Copyright  2018 OpsRamp, Inc. All Rights Reserved.
 
 	Permission is hereby granted, free of charge, to any person obtaining
 	a copy of this software and associated documentation files (the
